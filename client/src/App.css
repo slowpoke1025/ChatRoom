@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+
+
+.index {
+
+  font-size: 40px;
+}
+
+a {
+  text-decoration: none;
+  color: blue;
+}
+
+* {
+  font-family: 'Josefin Sans', 'Noto Serif TC', 'Noto Color Emoji', sans-serif;
+  padding: 0;
+  margin: 0;
+  /* box-sizing: border-box; */
+}
+
+body,
+html {
+  /* height: 100vh; */
+}
+
+
+:root {
+  --purple: #997af0;
+  --blue: #4e0eff;
+}
