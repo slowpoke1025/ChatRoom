@@ -10,6 +10,7 @@ const ChatRoomContainer = styled.div`
     
     .chat-body{
         background-color: #8a5;
+        position: relative;
         height:75%;
         padding:1rem 2rem;
         display: flex;
@@ -23,6 +24,35 @@ const ChatRoomContainer = styled.div`
             &-thumb {
                 background-color: #ffffff77;
                 border-radius: 1rem;
+            }
+        }
+        .img-display{
+            overflow:hidden;
+            position: absolute;
+            inset:0;
+            padding:2.5rem;
+            background-color: #00000088;
+            .close{
+                position: absolute;
+                top:2rem;
+                right:2rem;
+                transform:translate(50%,-50%);
+                color:#ff0000;
+                cursor: pointer;
+                font-size:1.5rem;
+                background-color: #fff;
+                border-radius:50%;
+                aspect-ratio:1/1;
+                transition:all .3s;
+                &:hover{
+                    transform:scale(1.1) translate(50%,-50%);
+                    transform-origin:center;
+                }
+            }
+            img{
+                width:100%;
+                height:100%;
+                object-fit:contain;
             }
         }
     }

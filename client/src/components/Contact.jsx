@@ -7,7 +7,7 @@ import brand from "../assets/brand.svg"
 const Contact = ({ contacts, user, handleContacts }) => {
     const [username, setUserName] = useState()
     const [img, setImg] = useState()
-    const [select, setSelect] = useState()
+    // const [select, setSelect] = useState()
 
     useEffect(() => {
         if (user) {
@@ -18,7 +18,7 @@ const Contact = ({ contacts, user, handleContacts }) => {
 
     const handleSelect = (id) => {
         handleContacts(id)
-        setSelect(id)
+        // setSelect(id)
     }
 
     return <>
@@ -34,7 +34,7 @@ const Contact = ({ contacts, user, handleContacts }) => {
                             const member = contact.members[0];
                             return (
                                 <div
-                                    className={`contact ${i === select ? "select" : ""}`}
+                                    className={`contact ${contact.select ? "select" : ""}`}
                                     onClick={() => handleSelect(i)}
                                     key={i}
                                 >

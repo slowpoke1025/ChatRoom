@@ -3,18 +3,20 @@ import { useRef } from 'react';
 import styled from 'styled-components';
 import { IoMdDocument } from "react-icons/io"
 import axios from 'axios';
-const Messages = ({ message, chatRef }) => {
+const Messages = ({ message, handleImageClick }) => {
     const scrollRef = useRef()
 
-    useEffect(() => {
-        if (scrollRef.current) {
-            setTimeout(() => {
-                scrollRef.current.scrollIntoView({ behavior: "smooth" })
-                console.log(scrollRef.current.textContent);
-            }, 50)
-        }
+    // useEffect(() => {
+    //     if (scrollRef.current) {
+    //         setTimeout(() => {
+    //             scrollRef.current.scrollIntoView({ behavior: "smooth" })
+    //             console.log(scrollRef.current.textContent);
+    //         }, 50)
+    //     }
 
-    }, [message, scrollRef])
+    // }, [message, scrollRef])
+
+
     return message.map((msg, i) => {
         return (
             <MessageBox mode={`${msg.fromself ? "sended" : "received"}`} key={msg._id} ref={i + 1 === message.length ? scrollRef : null}>
@@ -27,7 +29,7 @@ const Messages = ({ message, chatRef }) => {
                             <div className="text" dangerouslySetInnerHTML={{ __html: msg?.text }} />
                             : msg.type === "image"
                                 ?
-                                <img src={"http://localhost:5000/" + msg.link} alt="" />
+                                <img src={"http://localhost:5000/" + msg.link} alt="" onClick={handleImageClick} />
                                 : msg.type === "file"
                                     ?
                                     <div className='file'>

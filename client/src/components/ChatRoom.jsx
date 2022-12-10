@@ -1,13 +1,14 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 import ChatRoomContainer from "../style/ChatRoomContainer";
 import { axiosFile, axiosMsg } from "../utils/AxiosInstance";
 import ChatInput from "./ChatInput";
 import Logout from "./Logout";
 import Messages from "./Message";
+import { RiCloseCircleFill } from "react-icons/ri"
 
-
-const ChatRoom = ({ user, chat, socket, message, setMessage }) => {
+const ChatRoom = ({ user, chat, socket, message, setMessage, dispatch, chatKeys, generateChatKeys }) => {
 
 
     useEffect(() => {
@@ -28,18 +29,6 @@ const ChatRoom = ({ user, chat, socket, message, setMessage }) => {
         //eslint-disable-next-line
     }, [chat])
 
-    // useEffect(() => {
-    //     socket.current.on("receiveMessage", data => {
-    //         console.log({ ...data, fromself: false })
-    //         const arrivalMsg = { ...data, fromself: false }
-    //         if (chat._id === data.to)
-    //             setMessage(msg => msg.concat(arrivalMsg))
-    //         else {
-
-    //         }
-    //     })
-    //     return () => socket.current.off("receiveMessage")
-    // }, [])
     useEffect(() => {
         socket.current.on("receiveFile", data => {
             console.log({ ...data, fromself: false })
@@ -48,7 +37,7 @@ const ChatRoom = ({ user, chat, socket, message, setMessage }) => {
                 setMessage(msg => msg.concat(arrivalMsg))
         })
         return () => socket.current.off("receiveFile")
-    }, [])
+    }, [socket.current])
 
 
     const sendMessage = async (text) => {
@@ -64,6 +53,8 @@ const ChatRoom = ({ user, chat, socket, message, setMessage }) => {
             //     setMessage(msg => [...msg, { ...formatMsgInfo, fromself: true }])
             // })
             setMessage(msg => [...msg, { ...formatMsgInfo, fromself: true }])
+            if (chatKeys[chat._id] !== 0)
+                dispatch({ type: "POP_UP", data: { id: chatKeys.current[chat._id], generateChatKeys } })
             console.log({ ...formatMsgInfo, fromself: true })
         } catch (error) {
             console.log(error);
@@ -100,21 +91,29 @@ const ChatRoom = ({ user, chat, socket, message, setMessage }) => {
         }
     }
     const chatRef = useRef();
-    // useEffect(() => {
-    //     let timeout;
-    //     if (chatRef.current)
+    const [imgOpen, setImgOpen] = useState(false)
+    const [imgSrc, setImgSrc] = useState()
+    const [scrollTop, setScrollTop] = useState()
+    const handleImageClick = (e) => {
+        setImgOpen(true)
+        setImgSrc(e.target.src)
+        setScrollTop(chatRef.current.scrollTop)
+    }
+    useEffect(() => {
+        if (chatRef.current) {
+            setTimeout(() => {
+                chatRef.current.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" })
+            }, 50)
+        }
 
-    //         //     scrollRef.current.scrollIntoView({ behavior: "smooth" })
-    //         // console.log(scrollRef.current);
-    //         // timeout = setTimeout(() => {
-    //         chatRef.current?.scrollTo({
-    //             left: 0,
-    //             top: chatRef.current.scrollHeight,
-    //             behavior: "smooth"
-    //         })
-    //     // }, 100)
-    //     return () => clearTimeout(timeout)
-    // }, [message, chatRef])
+    }, [message])
+    useEffect(() => {
+        if (!imgOpen) {
+            chatRef.current.scrollTo(0, scrollTop)
+        }
+
+    }, [imgOpen, scrollTop])
+
     return (
         <ChatRoomContainer>
             <div className="chat-header">
@@ -130,7 +129,19 @@ const ChatRoom = ({ user, chat, socket, message, setMessage }) => {
                 <Logout socket={socket} />
             </div>
             <div className="chat-body" ref={chatRef}>
-                <Messages message={message} chatRef={chatRef} />
+                {
+                    imgOpen ?
+                        <div className="img-display">
+                            <RiCloseCircleFill className="close" onClick={() => {
+                                setImgOpen(false)
+
+
+
+                            }} />
+                            <img src={imgSrc} alt="" />
+                        </div> :
+                        <Messages message={message} chatRef={chatRef} handleImageClick={handleImageClick} />
+                }
             </div>
             <div className="chat-input">
                 <ChatInput sendMessage={sendMessage} sendFile={sendFile} />
@@ -139,5 +150,6 @@ const ChatRoom = ({ user, chat, socket, message, setMessage }) => {
     )
 
 }
+
 
 export default ChatRoom;

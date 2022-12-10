@@ -1,19 +1,28 @@
 
 
 export default function chatReducer(state, action) {
-    const _state = [...state];
+    let _state = [...state];
     console.log(action)
     const { id } = action.data;
     switch (action.type) {
         case "INIT":
             return action.data;
 
+        case "POP_UP":
         case "ADD_UNREAD":
-            console.log(_state[id]);
-            _state[id].unread += 0.5;
+            const { generateChatKeys } = action.data
+            const contact = _state.splice(id, 1);
+            if (action.type === "ADD_UNREAD") contact[0].unread += 0.5;
+            _state = [contact[0], ..._state];
+            generateChatKeys(_state)
             break;
         case "RM_UNREAD":
             _state[id].unread = 0;
+            break;
+        case "SELECT":
+            const { origin } = action.data
+            if (origin != null) _state[origin].select = false
+            _state[id].select = true
             break;
         case "ONLINE":
             _state[id].online = true;

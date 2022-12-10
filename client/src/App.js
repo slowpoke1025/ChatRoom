@@ -6,6 +6,7 @@ import Chat from "./components/Chat";
 import Index from "./components/Index";
 import SetAvatar from "./components/SetAvatar";
 import Test from "./pages/Test";
+
 function App() {
 
   return (

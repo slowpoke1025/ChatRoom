@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import ChatContainer from "../style/ChatContainer";
 import { axiosContact, axiosMsg, URL } from "../utils/AxiosInstance";
@@ -8,16 +8,24 @@ import Welcome from "./Welcome";
 import { io } from "socket.io-client"
 import { useReducer } from "react";
 import chatReducer from "../reducer/chatReducer";
+
 const Chat = () => {
 
     const socket = useRef()
     const navigate = useNavigate()
     const [user, setUser] = useState()
     const [contacts, dispatch] = useReducer(chatReducer, []);
-    const [chatKeys, setChatKeys] = useState({})
+    // const [chatKeys, setChatKeys] = useState({})
     const [chat, setChat] = useState();
     const [message, setMessage] = useState([])
-
+    const chatKeys = useRef({})
+    const generateChatKeys = (data) => {
+        const map = {}
+        data.forEach((d, i) => {
+            map[d._id] = i;
+        })
+        chatKeys.current = map;
+    }
     useEffect(() => {
         if (!localStorage.getItem("user"))
             navigate("/login")
@@ -34,12 +42,13 @@ const Chat = () => {
                 if (res.data) {
                     console.log(res.data)
                     dispatch({ type: "INIT", data: res.data });
-                    const map = {}
-                    res.data.forEach((d, i) => {
-                        map[d._id] = i;
-                    })
-                    console.log(map)
-                    setChatKeys(map)
+                    // const map = {}
+                    // res.data.forEach((d, i) => {
+                    //     map[d._id] = i;
+                    // })
+                    // console.log(map)
+                    // setChatKeys(map)
+                    generateChatKeys(res.data)
 
                 }
             } catch (error) {
@@ -70,34 +79,27 @@ const Chat = () => {
                 const arrivalMsg = { ...data, fromself: false }
                 console.log(chat)
                 if (chat?._id === data.to) {
-
+                    if (chatKeys.current[chat._id] !== 0)
+                        dispatch({ type: "POP_UP", data: { id: chatKeys.current[data.to], generateChatKeys } });
                     setMessage(msg => msg.concat(arrivalMsg))
                     // const res = await axiosMsg.post("/readMessage", { from: user._id, to: data.to })
                     socket.current.emit("read", { from: user._id, to: data.to });
                 }
                 else {
                     console.log(contacts);
-                    // const id = chatKeys[data.to];
-                    // const room = contacts[id]
-                    // room.unread += 1;
-                    // const _contacts = [...contacts]
-                    // _contacts[id] = room;
 
-                    dispatch({ type: "ADD_UNREAD", data: { id: chatKeys[data.to] } });
-
-                    //dispatch({type:"ADD_UNREAD",data:{index:chatKeys[data.to]}})
+                    dispatch({ type: "ADD_UNREAD", data: { id: chatKeys.current[data.to], generateChatKeys } });
                 }
             })
             socket.current.on("read", data => {
                 console.log("read")
             })
             socket.current.on("online", data => {
-                console.log(data, chatKeys);
-                dispatch({ type: "ONLINE", data: { ...data, id: chatKeys[data.room] } })
+                dispatch({ type: "ONLINE", data: { ...data, id: chatKeys.current[data.room] } })
             })
             socket.current.on("offline", data => {
                 // console.log(chatKeys[data.room]);
-                dispatch({ type: "OFFLINE", data: { ...data, id: chatKeys[data.room] } })
+                dispatch({ type: "OFFLINE", data: { ...data, id: chatKeys.current[data.room] } })
             })
 
 
@@ -108,10 +110,14 @@ const Chat = () => {
                 socket.current.off("online")
             }
         }
-    }, [chat, user, contacts, chatKeys])
+    }, [chat, user, contacts])
 
     const handleContacts = (id) => {
-        setChat(contacts[id]);
+        setChat(chat => {
+
+            dispatch({ type: "SELECT", data: { origin: chatKeys.current?.[chat?._id], id } })
+            return contacts[id]
+        });
         if (contacts[id].unread !== 0) {
             // const _contact = [...contacts];
             // _contact[id].unread = 0;
@@ -124,7 +130,12 @@ const Chat = () => {
             <div className="container">
                 <Contact contacts={contacts} user={user} handleContacts={handleContacts} />
                 {chat == null ? <Welcome user={user} /> :
-                    <ChatRoom user={user} chat={chat} socket={socket} message={message} setMessage={setMessage} />
+                    <ChatRoom
+                        user={user}
+                        chat={chat}
+                        socket={socket}
+                        message={message} setMessage={setMessage}
+                        dispatch={dispatch} chatKeys={chatKeys} generateChatKeys={generateChatKeys} />
                 }
             </div>
         </ChatContainer>
