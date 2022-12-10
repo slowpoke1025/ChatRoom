@@ -30,7 +30,7 @@ const Contact = ({ contacts, user, handleContacts }) => {
                         <h3>Chat</h3>
                     </div>
                     <div className="contacts">
-                        {contacts.map((contact, i) => {
+                        {contacts?.map((contact, i) => {
                             const member = contact.members[0];
                             return (
                                 <div
@@ -39,6 +39,7 @@ const Contact = ({ contacts, user, handleContacts }) => {
                                     key={i}
                                 >
                                     <div className="avatar">
+                                        <div className={`online ${contact.online ? "" : "off"}`} />
                                         <img src={member.image ? `data:image/svg+xml;base64,${member.image}` : defaultImg} alt="" />
                                     </div>
                                     <div className="username">

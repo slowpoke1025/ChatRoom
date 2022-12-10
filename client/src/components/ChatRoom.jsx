@@ -120,6 +120,7 @@ const ChatRoom = ({ user, chat, socket, message, setMessage }) => {
             <div className="chat-header">
                 <div className="chat-info">
                     <div className="avatar">
+                        <div className={`online ${chat.online ? "" : "off"}`}></div>
                         <img src={`data:image/svg+xml;base64,${chat.members[0].image}`} alt="" />
                     </div>
                     <div className="username">

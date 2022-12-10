@@ -38,8 +38,19 @@ const getAllChatRoom = async (req, res, next) => {
                 }
             },
             {
+                $lookup: {
+                    from: "User",
+                    localField: "members",
+                    foreignField: "_id",
+                    as: "users",
+                    pipeline: [
+                        { $match: { $and: [{ "_id": { $ne: mongoose.Types.ObjectId(id) }, "online": true }] } },
+                    ]
+                }
+            },
+            {
                 $addFields: {
-                    "messages": { $last: "$messages" },
+                    "lastMessage": { $last: "$messages" },
                     "unread": {
                         $size: {
                             $filter: {
@@ -52,9 +63,16 @@ const getAllChatRoom = async (req, res, next) => {
                                 as: "msg",
                             }
                         }
-                    }
-
+                    },
+                    "online": {
+                        $size: "$users"
+                    },
                 }
+
+            },
+
+            {
+                $project: { "messages": 0, "users": 0 }
             }
         ])
         const resp = await User.populate(contacts, { path: "members", select: "-password -__v", match: { _id: { $ne: id } } })

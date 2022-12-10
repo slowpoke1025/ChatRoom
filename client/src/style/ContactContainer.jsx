@@ -48,17 +48,33 @@ const ContactContainer = styled.div`
             border-radius:0.2rem;
             transition:0.5s ease-in-out;
             .avatar {
+                position: relative;
                 img {
                     width:100%;
                     min-width:3rem;
                     vertical-align: middle;
+                }
+                .online{
+                    position: absolute;
+                    width:1rem;
+                    aspect-ratio:1/1;
+                    background-color:#21bb21aa;
+                    border-radius:50%;
+                    bottom:0;
+                    &.off{
+                        background-color:#eae2e2aa;
+                    }
                 }
                 
             }
             .username{
                 color:white;
                 padding-left: 1rem;
-                vertical-align: middle;
+                /* vertical-align: middle; */
+                display: flex;
+                align-items:center;
+                gap:.5rem;
+                
             }
             .unread{
                 background-color: #ff0000dd;
@@ -68,10 +84,9 @@ const ContactContainer = styled.div`
                 width:1rem;
                 padding:.1rem;
                 display: flex;
-                align-items: center;
                 justify-content: center;
                 /* margin-left:auto; */
-                justify-self:center;
+                justify-self:center; /*grid center*/
                 
             }
             &.select{

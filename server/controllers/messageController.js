@@ -46,10 +46,10 @@ const addFile = async (req, res, next) => {
 
 const getAllMessage = async (req, res, next) => {
     try {
-        let cancel;
-        req.socket.on("close", d => {
-            cancel = true
-        })
+        // let cancel;
+        // req.socket.on("close", d => {
+        //     cancel = true
+        // })
         const { from, to } = req.body;
 
 
@@ -60,12 +60,13 @@ const getAllMessage = async (req, res, next) => {
         ])
 
         const data = await Message.updateMany({ chatroom: to, sender: { $ne: from }, read: { $ne: from } }, { $push: { read: from } })
-
-        if (cancel) return;
+        console.log(data)
+        // if (cancel) return;
         if (data.modifiedCount !== 0) {
             io.of("/").sockets.get(onlineUsers.get(from)) // === io.sockets.sockets
                 ?.to(to)
                 .emit("read", req.body)
+            console.log("read");
         }
 
         res.json(msg)

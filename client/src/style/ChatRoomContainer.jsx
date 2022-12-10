@@ -47,11 +47,24 @@ const ChatRoomContainer = styled.div`
             gap:1rem;
         }
         .avatar{
+            position: relative;
             img{
                 width:3rem;
             }
+            .online{
+                position: absolute;
+                width:1rem;
+                aspect-ratio:1/1;
+                background-color:#21bb21;
+                border-radius:50%;
+                bottom:0;
+                right:0;
+                &.off{
+                    background-color:#eae2e2aa;
+                }
+            }
         }
-        .username>h3{
+        .username{
             color:white;
         }
     }
