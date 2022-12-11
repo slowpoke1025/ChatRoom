@@ -100,7 +100,9 @@ const Chat = () => {
 
 
             })
-
+            socket.current.on("cancelCall", data => {
+                toast.dismiss();
+            })
             socket.current.on("read", data => {
                 console.log("read")
             })

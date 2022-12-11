@@ -123,6 +123,11 @@ io.on("connection", socket => {
         const { from, to } = data
         socket.to(onlineUsers.get(to)).emit("videoClose", data)
     })
+    socket.on("cancelCall", (data) => {
+        const { to } = data
+        console.log("cancel")
+        socket.to(to).emit("cancelCall", data)
+    })
 
     socket.on("reject", (data) => {
         const { from, to } = data
