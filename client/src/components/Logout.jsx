@@ -6,10 +6,10 @@ import { LogoutButton } from "../style/LogoutButton"
 const Logout = ({ socket }) => {
     const navigate = useNavigate()
     const handleClick = () => {
-        // socket.current.disconnect()
-        // localStorage.clear();
-        // navigate("/login");
-        navigate("/test")
+        socket.current.disconnect()
+        localStorage.clear();
+        navigate("/login");
+        // navigate("/test")
     }
     return (
         <LogoutButton onClick={handleClick}>

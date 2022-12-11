@@ -1,15 +1,18 @@
 
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
 import ChatRoomContainer from "../style/ChatRoomContainer";
 import { axiosFile, axiosMsg } from "../utils/AxiosInstance";
 import ChatInput from "./ChatInput";
 import Logout from "./Logout";
 import Messages from "./Message";
 import { RiCloseCircleFill } from "react-icons/ri"
+import { FaVideo } from "react-icons/fa"
+import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom";
 
 const ChatRoom = ({ user, chat, socket, message, setMessage, dispatch, chatKeys, generateChatKeys }) => {
 
+    const navigate = useNavigate()
 
     useEffect(() => {
         const controller = new AbortController()
@@ -29,15 +32,7 @@ const ChatRoom = ({ user, chat, socket, message, setMessage, dispatch, chatKeys,
         //eslint-disable-next-line
     }, [chat])
 
-    useEffect(() => {
-        socket.current.on("receiveFile", data => {
-            console.log({ ...data, fromself: false })
-            const arrivalMsg = { ...data, fromself: false }
-            if (chat._id === data.to)
-                setMessage(msg => msg.concat(arrivalMsg))
-        })
-        return () => socket.current.off("receiveFile")
-    }, [socket.current])
+
 
 
     const sendMessage = async (text) => {
@@ -111,7 +106,6 @@ const ChatRoom = ({ user, chat, socket, message, setMessage, dispatch, chatKeys,
         if (!imgOpen) {
             chatRef.current.scrollTo(0, scrollTop)
         }
-
     }, [imgOpen, scrollTop])
 
     return (
@@ -126,7 +120,15 @@ const ChatRoom = ({ user, chat, socket, message, setMessage, dispatch, chatKeys,
                         <h3>{chat.members[0].username}</h3>
                     </div>
                 </div>
-                <Logout socket={socket} />
+                <div className="chat-btns">
+                    {chat.online ?
+                        <FaVideo className="video-call" onClick={() => {
+                            socket.current.emit("videoCall", { from: user._id, to: chat._id })
+                            socket.current.close()
+                            navigate("/test", { state: { user, chat, flag: true } })
+                        }} /> : ""}
+                    <Logout socket={socket} />
+                </div>
             </div>
             <div className="chat-body" ref={chatRef}>
                 {
@@ -134,9 +136,6 @@ const ChatRoom = ({ user, chat, socket, message, setMessage, dispatch, chatKeys,
                         <div className="img-display">
                             <RiCloseCircleFill className="close" onClick={() => {
                                 setImgOpen(false)
-
-
-
                             }} />
                             <img src={imgSrc} alt="" />
                         </div> :

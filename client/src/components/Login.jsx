@@ -30,8 +30,8 @@ const Login = () => {
                 localStorage.setItem("user", JSON.stringify(user))
                 const dest = user.image === "" ? "/setAvatar" : "/chat"
                 setTimeout(() => {
-                    toast.dismiss(tid)
                     navigate(dest);
+                    toast.dismiss(tid)
                 }, 2000)
             }
 

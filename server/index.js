@@ -108,17 +108,28 @@ io.on("connection", socket => {
 
     })
 
-    // socket.on("addMessage", (data, cb) => {
-    //     const { from, to, message, _id } = data
-    //     console.log(data)
-    //     cb()
-    //     socket.to(to).emit("receiveMessage", data)
-    // })
+
     socket.on("read", async (data) => {
         const { from, to } = data
         const res = await Message.updateMany({ chatroom: to, sender: { $ne: from }, read: { $ne: from } }, { $push: { read: from } }, { new: true })
         console.log(res)
         socket.to(to).emit("read", data)
+    })
+    socket.on("videoCall", (data, cb) => {
+        const { from, to } = data
+        socket.to(to).emit("videoCall", data)
+    })
+    socket.on("videoClose", (data) => {
+        const { from, to } = data
+        socket.to(onlineUsers.get(to)).emit("videoClose", data)
+    })
+
+    socket.on("reject", (data) => {
+        const { from, to } = data
+        socket.to(onlineUsers.get(to)).emit("reject", data)
+    })
+    socket.on("test", (data) => {
+        console.log(data)
     })
     socket.on('disconnecting', () => {
 

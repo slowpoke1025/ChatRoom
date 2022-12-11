@@ -63,6 +63,21 @@ const ChatRoomContainer = styled.div`
         display: flex;
         align-items: center;
     }
+    .chat-btns{
+        display: flex;
+        align-items: center;
+        gap:1rem;
+        .video-call{
+            font-size:1.8rem;
+            cursor: pointer;
+            transition:all .3s;
+            &:hover{
+                color:#21bb21;
+                margin-top:-.5rem;
+             
+            }
+        }
+    }
     .chat-header{
         display: flex;
         justify-content:space-between;
