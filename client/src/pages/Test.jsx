@@ -9,6 +9,7 @@ import { URL } from '../utils/AxiosInstance';
 import { toast } from 'react-toastify';
 import { MdCallEnd } from "react-icons/md"
 import { IoMicOff, IoMic, IoVideocamOutline, IoVideocamOffOutline } from "react-icons/io5";
+import loading from "../assets/loading.gif";
 
 const VideoContainer = styled.div`
     box-sizing:border-box;
@@ -20,14 +21,9 @@ const VideoContainer = styled.div`
     justify-content: center;
     align-items: center;
     position: relative;
-    .btns{
-        position: absolute;
-        left:0;
-        top:0;
-    }
+  
     .videos{
-       
-       
+       max-width:80%;
        display: grid;
        grid-template-columns:1fr 1fr;
        gap:2rem;
@@ -85,9 +81,10 @@ const VideoContainer = styled.div`
     video{
         box-sizing:border-box;
         width:100%;
+        max-width:100%;
         aspect-ratio:4/3;
         /* object-position:top; */
-        object-fit:cover;
+        object-fit:contain;
         border-radius:10px;
         border:5px solid #ffffff;
         background-color: #fff;
@@ -129,7 +126,7 @@ const Test = () => {
                 }, 2000)
             })
             socket.current.on("videoClose", data => {
-                alert("close", data)
+
                 localStream.current.getTracks().forEach(track => {
                     track.stop();
                 })
@@ -144,11 +141,14 @@ const Test = () => {
                 }, 2000)
             })
         }
+        return () => {
+            socket.current.off("reject");
+        }
 
     }, [])
     const toggleVideo = () => {
         if (localStream.current) {
-            console.log(remoteStream.current.getVideoTracks())
+
             localStream.current.getVideoTracks().forEach((track) => {
                 track.enabled = !track.enabled
 
@@ -170,11 +170,25 @@ const Test = () => {
         if (!closeFunc.current?.()) {
             socket.current.emit("cancelCall", { to: state.current.chat._id })
         }
-        localStream.current.removeTrack()
-        remoteStream.current.removeTrack()
+        localStream.current?.getTracks().forEach(t => t.stop())
+        remoteStream.current?.getTracks().forEach(t => t.stop())
         navigate("/chat")
 
     }
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (!closeFunc.current) {
+                localStream.current.getTracks().forEach(t => t.stop())
+
+                const tid = toast.error("close")
+                setTimeout(() => {
+                    navigate("/chat")
+                    toast.dismiss(tid)
+                }, 2000)
+            }
+        }, 15000)
+        return () => { clearTimeout(timeout) }
+    }, [])
     useEffect(() => {
 
         console.log(state.current)
@@ -316,8 +330,8 @@ const Test = () => {
                     <span className="name">{state.current.chat.members[0].username}</span>
 
                 </div>
-                <video ref={localRef} poster={"data:image/svg+xml;base64," + state.current.user.image}></video>
-                <video ref={remoteRef} poster={"data:image/svg+xml;base64," + state.current.chat.members[0].image}></video>
+                <video ref={localRef} poster={loading}></video>
+                <video ref={remoteRef} poster={loading}></video>
                 <div className="controls">
                     {audio ? <IoMic onClick={toggleAudio} /> : <IoMicOff onClick={toggleAudio} />}
                     <MdCallEnd className='close' onClick={handleClose} />

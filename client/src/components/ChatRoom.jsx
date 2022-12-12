@@ -81,6 +81,8 @@ const ChatRoom = ({ user, chat, socket, message, setMessage, dispatch, chatKeys,
                 from: user._id,
                 to: chat._id
             }])
+            if (chatKeys[chat._id] !== 0)
+                dispatch({ type: "POP_UP", data: { id: chatKeys.current[chat._id], generateChatKeys } })
         } catch (error) {
             console.log(error);
         }

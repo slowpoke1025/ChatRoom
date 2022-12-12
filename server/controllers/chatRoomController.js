@@ -31,9 +31,9 @@ const getAllChatRoom = async (req, res, next) => {
                         //         // sender: { $ne: mongoose.Types.ObjectId(id) }
                         //     }
                         // },
-                        {
-                            $sort: { "_id": 1 }
-                        }
+                        // {
+                        //     $sort: { "_id": 1 }
+                        // }
                     ]
                 }
             },
@@ -72,7 +72,10 @@ const getAllChatRoom = async (req, res, next) => {
             },
 
             {
-                $project: { "messages": 0, "users": 0 }
+                $project: { "messages": 0, "users": 0 },
+            },
+            {
+                $sort: { "lastMessage.createdAt": -1 }
             }
         ])
         const resp = await User.populate(contacts, { path: "members", select: "-password -__v", match: { _id: { $ne: id } } })

@@ -12,7 +12,7 @@ const Call = ({ accept, closeToast, reject, chat }) => {
             <div className="btns">
                 <BsFillTelephoneInboundFill className="accept" onClick={accept} />
                 <BsFillTelephoneXFill className="reject" onClick={() => {
-                    reject()
+                    // reject()
                     closeToast()
                 }} />
             </div>
@@ -23,31 +23,38 @@ const Call = ({ accept, closeToast, reject, chat }) => {
 const StyledCall = styled.div`
     display:flex;
     width:100%;
+   
+    
     .info{
         width:100%;
         text-align: center;
         img{
-            width:60%;
+            width:40%;
         }
         .name{
-            font-size:2rem;
+            font-size:1.5rem;
         }
     }
     .btns{
         width:50%;
-        font-size:2rem;
+        font-size:1.8rem;
         display: flex;
         flex-direction:column;
         justify-content:space-around;
-        .reject{
-            color:#e53a3aed;
+        svg{
+            transition:all .3s;
+
+            &:hover{
+                scale:1.1;
             filter:drop-shadow(0 0 2px #555);
 
+            }
+        }
+        .reject{
+            color:#e53a3aed;
         }
         .accept{
             color:#11cb43;
-            filter:drop-shadow(0 0 2px #555);
-            
         }
     }
 `

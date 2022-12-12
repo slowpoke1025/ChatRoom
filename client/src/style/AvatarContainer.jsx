@@ -14,12 +14,26 @@ const AvatarContainer = styled.div`
             color:#fff;
         }
     }
+    .btns{
+        display: flex;
+        align-items: center;
+        gap:1rem;
+        svg{
+            font-size:2rem;
+            color:#ddd;
+            cursor: pointer;
+            transition:all 1s;
+            &:hover{
+                transform:rotate(180deg);
+            }
+        }
+    }
     .avatars{
         display: flex;
         justify-content: center;
         align-items: center;
         gap:2rem;
-        border:1px solid #fff;
+        /* border:1px solid #fff; */
         .avatar{
             width:6rem;
             border:.4rem solid #00000000;

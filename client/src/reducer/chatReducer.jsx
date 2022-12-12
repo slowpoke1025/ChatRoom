@@ -12,7 +12,7 @@ export default function chatReducer(state, action) {
         case "ADD_UNREAD":
             const { generateChatKeys } = action.data
             const contact = _state.splice(id, 1);
-            if (action.type === "ADD_UNREAD") contact[0].unread += 0.5;
+            if (action.type === "ADD_UNREAD") contact[0].unread += 1;
             _state = [contact[0], ..._state];
             generateChatKeys(_state)
             break;

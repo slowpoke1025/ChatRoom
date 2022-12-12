@@ -7,11 +7,12 @@ import axios from "axios"
 import { Buffer } from "buffer"
 import AvatarContainer from "../style/AvatarContainer"
 import { Button } from "../style/Button"
+import { FiRefreshCw } from "react-icons/fi"
 const SetAvatar = () => {
     const [avatars, setAvatars] = useState([])
     const [loading, setLoading] = useState(true)
     const [select, setSelect] = useState();
-
+    const [refresh, setRefresh] = useState(0)
     const navigate = useNavigate()
     const handleSelect = async () => {
         if (select == null)
@@ -60,7 +61,7 @@ const SetAvatar = () => {
             setLoading(false);
         }
         getAvatar()
-    }, [])
+    }, [refresh])
 
 
     return (
@@ -78,12 +79,18 @@ const SetAvatar = () => {
                             src={`data:image/svg+xml;base64,${avt}`} alt="" />)}
 
                     </div>
-                    <Button
-                        className="submit-btn"
-                        onClick={handleSelect}
-                    >
-                        Set as Profile Picture
-                    </Button>
+                    <div className="btns">
+                        <Button
+                            className="submit-btn"
+                            onClick={handleSelect}
+                        >
+                            Set as Profile Picture
+                        </Button>
+                        <FiRefreshCw onClick={() => {
+                            setRefresh(n => n + 1)
+                            setLoading(true)
+                        }} />
+                    </div>
                 </>
             )}
         </AvatarContainer>
